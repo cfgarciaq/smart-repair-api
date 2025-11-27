@@ -1,0 +1,6 @@
+@SmartRepairApi_HostAddress = http://localhost:5080
+
+GET {{SmartRepairApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

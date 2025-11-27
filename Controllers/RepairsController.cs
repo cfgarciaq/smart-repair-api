@@ -1,0 +1,113 @@
+﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SmartRepairApi.Data;
+using SmartRepairApi.Dtos.Repair;
+using SmartRepairApi.Models;
+using System.ComponentModel.DataAnnotations;
+
+namespace SmartRepairApi.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RepairsController : ControllerBase
+    {
+        private readonly AppDbContext _context;        
+        private readonly IMapper _mapper; // injection of IMapper
+
+        public RepairsController(AppDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+
+        // GET: api/Repairs
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<RepairDto>>> GetRepairs()
+        {
+            // Fetch repairs with related clients
+            var repairs = await _context.Repairs
+                .Include(r => r.Client)
+                .ToListAsync();
+
+            return _mapper.Map<List<RepairDto>>(repairs); // Map entities to DTOs
+        }
+
+        // GET: api/Repairs/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<RepairDto>> GetRepair(int id)
+        {
+
+            // Fetch repair with related client
+            var repair = await _context.Repairs
+                .Include(r => r.Client)
+                .FirstOrDefaultAsync(r => r.Id == id);
+
+            if (repair == null)
+                return NotFound();
+
+            return _mapper.Map<RepairDto>(repair); // Map entity to DTO
+        }
+
+        // POST: api/Repairs  
+        [HttpPost]
+        public async Task<ActionResult<RepairDto>> PostRepair(
+            [FromBody] RepairCreateDto repairDto,
+            [FromServices] IValidator<RepairCreateDto> validator)
+        {
+            // 1. Async validation
+            var validationResult = await validator.ValidateAsync(repairDto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+            // 2. Mapping DTO → ENTITY
+            var repair = _mapper.Map<Repair>(repairDto);
+
+            // 3. Save to DB
+            await _context.Repairs.AddAsync(repair);
+            await _context.SaveChangesAsync();
+
+            // 4. Return DTO
+            var result = _mapper.Map<RepairDto>(repair);
+            return CreatedAtAction(nameof(GetRepair), new { id = repair.Id }, result);
+        }
+
+        // PUT: api/Repairs/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutRepair(int id, RepairUpdateDto repairDto)
+        {
+            // Find existing repair
+            var repair = await _context.Repairs.FindAsync(id);
+            if (repair == null)
+                return NotFound();
+
+            // Apply updates via AutoMapper
+            _mapper.Map(repairDto, repair);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent(); // Standard response for successful PUT without body
+        }
+
+        // DELETE: api/Repairs/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteRepair(int id)
+        {
+            // Find existing repair
+            var repair = await _context.Repairs.FindAsync(id);
+
+            if (repair == null)
+                return NotFound();
+
+            // Remove from DB
+            _context.Repairs.Remove(repair);
+            await _context.SaveChangesAsync();
+
+            // 204 No Content
+            return NoContent(); // Standard response for successful DELETE without body
+        }
+    }
+}
