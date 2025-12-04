@@ -2,7 +2,7 @@
 {
     public class ClientCreateDto
     {
-        public string Name { get; set; }
-        public string Phone { get; set; }
+        public required string Name { get; set; }
+        public required string Phone { get; set; }
     }
 }
