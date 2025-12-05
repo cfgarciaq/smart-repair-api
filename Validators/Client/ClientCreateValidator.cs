@@ -14,6 +14,8 @@ namespace SmartRepairApi.Validators.Client
                 .WithMessage("Name cannot exceed 100 characters.");
 
             RuleFor(client => client.Phone)
+                .NotEmpty()
+                .WithMessage("Phone is required.")
                 .Matches(@"^[0-9]{9}$")
                 .WithMessage("Phone number must be exactly 9 digits.");
         }
