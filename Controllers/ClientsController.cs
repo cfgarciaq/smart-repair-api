@@ -4,6 +4,7 @@ using SmartRepairApi.Data;
 using SmartRepairApi.Models;
 using SmartRepairApi.Dtos.Client;
 using AutoMapper;
+using FluentValidation;
 
 namespace SmartRepairApi.Controllers
 {
@@ -42,8 +43,16 @@ namespace SmartRepairApi.Controllers
 
         // POST: api/Clients
         [HttpPost]
-        public async Task<ActionResult<ClientDto>> PostClient(ClientCreateDto clientDto)
+        public async Task<ActionResult<ClientDto>> PostClient(
+            [FromBody] ClientCreateDto clientDto,
+            [FromServices] IValidator<ClientCreateDto> validator)
         {
+            var validationResult = await validator.ValidateAsync(clientDto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
             var client = _mapper.Map<Client>(clientDto);
 
             await _context.Clients.AddAsync(client); // Changed to use AddAsync to fix S6966
