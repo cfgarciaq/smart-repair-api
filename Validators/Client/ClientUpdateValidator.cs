@@ -8,12 +8,13 @@ namespace SmartRepairApi.Validators.Client
         public ClientUpdateValidator()
         {
             RuleFor(x => x.Name)
-                    .NotEmpty()
-                    .MaximumLength(100);
+                .NotEmpty().WithMessage("Name is required.")
+                .MaximumLength(100).WithMessage("Name cannot exceed 100 characters.");
 
             RuleFor(x => x.Phone)
-                    .NotEmpty()
-                    .Matches(@"^[0-9]{9}$");
+                .NotEmpty().WithMessage("Phone is required.")
+                .MaximumLength(20).WithMessage("Phone cannot exceed 20 characters.")
+                .Matches("^[0-9]{9}$").WithMessage("Phone number must be exactly 9 digits.");
         }
     }
 }
