@@ -7,6 +7,9 @@ namespace SmartRepairApi.Validators.Client
     {
         public ClientUpdateValidator()
         {
+            // Stop validating further rules on the first failure
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name is required.")
                 .MaximumLength(100).WithMessage("Name cannot exceed 100 characters.");
