@@ -13,8 +13,8 @@ namespace SmartRepairApi.Validators.Repair
         {
             _context = context;
 
-            // continue validating other rules even if one fails
-            ClassLevelCascadeMode = CascadeMode.Continue;
+            // stop validating other rules even if one fails
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(repair => repair.Device)
                 .NotEmpty().WithMessage("Device is required.")
