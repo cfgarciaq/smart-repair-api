@@ -7,6 +7,9 @@ namespace SmartRepairApi.Validators.Client
     {
         public ClientCreateValidator()
         {
+            // Stop validating further rules on the first failure
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(client => client.Name)
                 .NotEmpty()
                 .WithMessage("Name is required.")
