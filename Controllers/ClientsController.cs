@@ -65,11 +65,24 @@ namespace SmartRepairApi.Controllers
 
         // PUT: api/Clients/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutClient(int id, ClientUpdateDto clientDto)
+        public async Task<IActionResult> PutClient(
+            int id, 
+            [FromBody] ClientUpdateDto clientDto,
+            [FromServices] IValidator<ClientUpdateDto> validator)
         {
+            // Validate input
+            var validationResult = await validator.ValidateAsync(clientDto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
+            // Find existing client
             var client = await _context.Clients.FindAsync(id);
             if (client == null)
+            {
                 return NotFound();
+            }
 
             // Apply updates
             _mapper.Map(clientDto, client);
