@@ -17,7 +17,8 @@ namespace SmartRepairApi.Mappings
             // Repair
             CreateMap<Repair, RepairDto>();
             CreateMap<RepairCreateDto, Repair>();
-            CreateMap<RepairUpdateDto, Repair>();
+            CreateMap<RepairUpdateDto, Repair>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
         }
     }
 }
