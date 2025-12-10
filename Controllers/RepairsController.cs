@@ -77,12 +77,24 @@ namespace SmartRepairApi.Controllers
 
         // PUT: api/Repairs/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRepair(int id, RepairUpdateDto repairDto)
+        public async Task<IActionResult> PutRepair(
+            int id, 
+            [FromBody] RepairUpdateDto repairDto,
+            [FromServices] IValidator<RepairUpdateDto> validator)
         {
+            // Validate input
+            var validationResult = await validator.ValidateAsync(repairDto);
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors);
+            }
+
             // Find existing repair
             var repair = await _context.Repairs.FindAsync(id);
             if (repair == null)
+            {
                 return NotFound();
+            }
 
             // Apply updates via AutoMapper
             _mapper.Map(repairDto, repair);
