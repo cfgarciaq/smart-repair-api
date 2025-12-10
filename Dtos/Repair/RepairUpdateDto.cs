@@ -2,7 +2,7 @@
 {
     public class RepairUpdateDto
     {
-        public string Description { get; set; }
-        public decimal Cost { get; set; }
+        public required string Description { get; set; }
+        public required decimal Cost { get; set; }
     }
 }
