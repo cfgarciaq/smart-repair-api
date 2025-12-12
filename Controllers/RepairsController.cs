@@ -3,7 +3,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartRepairApi.Data;
+using SmartRepairApi.Dtos.Common;
 using SmartRepairApi.Dtos.Repair;
+using SmartRepairApi.Extensions;
 using SmartRepairApi.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,7 +15,7 @@ namespace SmartRepairApi.Controllers
     [Route("api/[controller]")]
     public class RepairsController : ControllerBase
     {
-        private readonly AppDbContext _context;        
+        private readonly AppDbContext _context; // injection of AppDbContext
         private readonly IMapper _mapper; // injection of IMapper
 
         public RepairsController(AppDbContext context, IMapper mapper)
@@ -24,14 +26,32 @@ namespace SmartRepairApi.Controllers
 
         // GET: api/Repairs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RepairDto>>> GetRepairs()
+        public async Task<ActionResult<IEnumerable<RepairDto>>> GetRepairs(
+            [FromQuery] RepairQueryParameters param)
         {
-            // Fetch repairs with related clients
-            var repairs = await _context.Repairs
-                .Include(r => r.Client)
-                .ToListAsync();
+            // Build query with filtering, sorting, and pagination
+            var query = _context.Repairs
+                .Include(r => r.Client) // Include related Client
+                .AsQueryable();
 
-            return _mapper.Map<List<RepairDto>>(repairs); // Map entities to DTOs
+            query = query.ApplyFiltering(param); // Apply filtering
+            query = query.ApplySorting(param.Sort); // Apply sorting
+
+            // Apply pagination and get paged result
+            var paged = await query.ToPagedResultAsync(param.Page, param.PageSize);
+
+            // Map to PagedResult<RepairDto>
+            var dto = new PagedResult<RepairDto>
+            {
+                Items = _mapper.Map<IEnumerable<RepairDto>>(paged.Items), // Map entities to DTOs
+                Page = paged.Page, // Copy pagination info
+                PageSize = paged.PageSize,
+                TotalItems = paged.TotalItems,
+                TotalPages = paged.TotalPages
+            };
+
+            // Return the paged DTO result
+            return Ok(dto);
         }
 
         // GET: api/Repairs/5
