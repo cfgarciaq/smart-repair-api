@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartRepairApi.Data;
-using SmartRepairApi.Models;
 using SmartRepairApi.Dtos.Client;
-using AutoMapper;
-using FluentValidation;
+using SmartRepairApi.Dtos.Common;
+using SmartRepairApi.Extensions;
+using SmartRepairApi.Models;
 
 namespace SmartRepairApi.Controllers
 {
@@ -23,10 +25,29 @@ namespace SmartRepairApi.Controllers
 
         // GET: api/Clients
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ClientDto>>> GetClients()
+        public async Task<ActionResult<IEnumerable<ClientDto>>> GetClients(
+            [FromQuery] ClientQueryParameters param)
         {
-            var clients = await _context.Clients.ToListAsync();
-            return _mapper.Map<List<ClientDto>>(clients);
+            // Start with the full clients query
+            var query = _context.Clients.AsQueryable();
+
+            query = query.ApplyFiltering(param); // Filtering extension method
+            query = query.ApplySorting(param.Sort); // Sorting extension method
+
+            // Paging
+            var paged = await query.ToPagedResultAsync(param.Page, param.PageSize);
+
+            // Map to DTO
+            var dto = new PagedResult<ClientDto>
+            {
+                Items = _mapper.Map<IEnumerable<ClientDto>>(paged.Items),
+                Page = paged.Page,
+                PageSize = paged.PageSize,
+                TotalItems = paged.TotalItems,
+                TotalPages = paged.TotalPages
+            };
+
+            return Ok(dto); // Return 200 with paged DTO
         }
 
         // GET: api/Clients/5
