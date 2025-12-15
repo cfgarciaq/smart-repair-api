@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SmartRepairApi.Data;
+using SmartRepairApi.Data.Seed;
 using SmartRepairApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,14 @@ builder.Services.AddControllers()
 
 // BUILD APP
 var app = builder.Build();
+
+// Seed Database on Startup
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider; // Get service provider from scope
+    var context = services.GetRequiredService<AppDbContext>(); // Get AppDbContext instance
+    await DbSeeder.SeedAsync(context); // Seed the database
+}
 
 // 5. Middleware
 if (app.Environment.IsDevelopment())
