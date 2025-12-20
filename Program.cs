@@ -33,6 +33,16 @@ builder.Services.AddControllers()
         options.SuppressModelStateInvalidFilter = true;
     });
 
+// CORS Policy for Development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactDev", policy =>
+        policy.WithOrigins("http://localhost:5173") // Vite dev server
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
+});
+
 // ------------------------------------------------------------
 
 // BUILD APP
@@ -56,7 +66,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection(); // Enforce HTTPS
 
+// Use CORS policy
+app.UseCors("AllowReactDev");
+
+// Global Exception Handling Middleware
 app.UseGlobalExceptionMiddleware();
+
+// Authorization Middleware
 app.UseAuthorization();
 
 // 6. Endpoints
