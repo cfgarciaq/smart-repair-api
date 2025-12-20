@@ -69,7 +69,10 @@ app.UseHttpsRedirection(); // Enforce HTTPS
 // Use CORS policy
 app.UseCors("AllowReactDev");
 
+// Global Exception Handling Middleware
 app.UseGlobalExceptionMiddleware();
+
+// Authorization Middleware
 app.UseAuthorization();
 
 // 6. Endpoints
