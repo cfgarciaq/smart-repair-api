@@ -49,8 +49,9 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Seed Database on Startup
-using (var scope = app.Services.CreateScope())
+if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateScope(); // Create a new scope
     var services = scope.ServiceProvider; // Get service provider from scope
     var context = services.GetRequiredService<AppDbContext>(); // Get AppDbContext instance
     await DbSeeder.SeedAsync(context); // Seed the database
@@ -60,9 +61,10 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage(); // Detailed error pages in development
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
+
+app.UseSwagger(); // Enable Swagger middleware
+app.UseSwaggerUI(); // Enable Swagger UI
 
 app.UseHttpsRedirection(); // Enforce HTTPS
 
