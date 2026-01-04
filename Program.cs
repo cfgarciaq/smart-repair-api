@@ -33,11 +33,11 @@ builder.Services.AddControllers()
         options.SuppressModelStateInvalidFilter = true;
     });
 
-// CORS Policy for Development
+// CORS Policy for Production Frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactDev", policy =>
-        policy.WithOrigins("http://localhost:5173") // Vite dev server
+    options.AddPolicy("FrontendPolicy", policy =>
+        policy.WithOrigins("https://smart-repair-ui.vercel.app") // Allow only the production frontend URL
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
@@ -69,7 +69,7 @@ app.UseSwaggerUI(); // Enable Swagger UI
 app.UseHttpsRedirection(); // Enforce HTTPS
 
 // Use CORS policy
-app.UseCors("AllowReactDev");
+app.UseCors("FrontendPolicy");
 
 // Global Exception Handling Middleware
 app.UseGlobalExceptionMiddleware();
