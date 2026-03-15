@@ -11,5 +11,7 @@ namespace SmartRepairApi.Data
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<Repair> Repairs { get; set; }
+        public DbSet<Technician> Technicians { get; set; }
+        public DbSet<RepairHistory> RepairHistories { get; set; }
     }
 }
