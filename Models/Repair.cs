@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartRepairApi.Models.Enums;
 
 namespace SmartRepairApi.Models
 {
@@ -11,11 +12,16 @@ namespace SmartRepairApi.Models
         [Precision(18, 2)]
         public decimal Cost { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        public RepairStatus Status { get; set; } = RepairStatus.Pending;
 
-        // Foreign key
+        // Foreign keys
         public int ClientId { get; set; }
+        public int? TechnicianId { get; set; }
 
-        // Navigation property
+        // Navigation properties
         public required Client Client { get; set; }
+        public Technician? Technician { get; set; }
+        public ICollection<RepairHistory> History { get; set; } = new List<RepairHistory>();
     }
 }

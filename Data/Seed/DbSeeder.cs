@@ -1,5 +1,7 @@
 ﻿using SmartRepairApi.Data;
 using SmartRepairApi.Models;
+using SmartRepairApi.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace SmartRepairApi.Data.Seed
 {
@@ -7,8 +9,21 @@ namespace SmartRepairApi.Data.Seed
     {
         public static async Task SeedAsync(AppDbContext context)
         {
-            // Seed Clients if none exist
-            if (!context.Clients.Any())
+            // 1. Seed Technicians
+            if (!await context.Technicians.AnyAsync())
+            {
+                var technicians = new List<Technician>
+                {
+                    new() { Name = "John Doe", Specialization = "Smartphones" },
+                    new() { Name = "Jane Smith", Specialization = "Laptops & Tablets" },
+                    new() { Name = "Mike Ross", Specialization = "General Electronics" }
+                };
+                await context.Technicians.AddRangeAsync(technicians);
+                await context.SaveChangesAsync();
+            }
+
+            // 2. Seed Clients
+            if (!await context.Clients.AnyAsync())
             {
                 var clients = new List<Client>
                 {
@@ -20,32 +35,60 @@ namespace SmartRepairApi.Data.Seed
                     new() { Name = "Laura Martinez", Phone = "601111222" },
                     new() { Name = "James Brown", Phone = "601333444" },
                 };
-
-                // Add clients to the context and save changes
                 await context.Clients.AddRangeAsync(clients);
                 await context.SaveChangesAsync();
             }
 
-
-            if (!context.Repairs.Any())
+            // 3. Seed Repairs
+            if (!await context.Repairs.AnyAsync())
             {
-                // Retrieve clients to associate with repairs
-                var clients = context.Clients.ToList();
+                var clients = await context.Clients.ToListAsync();
+                var technicians = await context.Technicians.ToListAsync();
 
-                // If there are no repairs, we can log or handle it as needed
                 var repairs = new List<Repair>
                 {
-                    new() { Device = "iPhone 13", Description = "Battery replacement", Cost = 80, ClientId = clients[0].Id, Client = clients[0] },
-                    new() { Device = "Samsung S22", Description = "Screen broken", Cost = 120, ClientId = clients[1].Id, Client = clients[1] },
-                    new() { Device = "Xiaomi Redmi", Description = "Charging port", Cost = 60, ClientId = clients[2].Id, Client = clients[2] },
-                    new() { Device = "iPhone X", Description = "Speaker issue", Cost = 50, ClientId = clients[3].Id, Client = clients[3] },
-                    new() { Device = "Huawei P30", Description = "Camera not working", Cost = 90, ClientId = clients[4].Id, Client = clients[4] },
-                    new() { Device = "OnePlus 9", Description = "Software update", Cost = 40, ClientId = clients[5].Id, Client = clients[5] },
-                    new() { Device = "Google Pixel 6", Description = "Microphone issue", Cost = 70, ClientId = clients[6].Id, Client = clients[6] },
+                    new() { 
+                        Device = "iPhone 13", 
+                        Description = "Battery replacement", 
+                        Cost = 80, 
+                        ClientId = clients[0].Id, 
+                        Client = clients[0],
+                        TechnicianId = technicians[0].Id,
+                        Status = RepairStatus.Completed
+                    },
+                    new() { 
+                        Device = "Samsung S22", 
+                        Description = "Screen broken", 
+                        Cost = 120, 
+                        ClientId = clients[1].Id, 
+                        Client = clients[1],
+                        TechnicianId = technicians[0].Id,
+                        Status = RepairStatus.InProgress
+                    },
+                    new() { 
+                        Device = "MacBook Pro", 
+                        Description = "Keyboard issue", 
+                        Cost = 200, 
+                        ClientId = clients[2].Id, 
+                        Client = clients[2],
+                        TechnicianId = technicians[1].Id,
+                        Status = RepairStatus.Pending
+                    }
                 };
 
-                // Add repairs to the context and save changes
                 await context.Repairs.AddRangeAsync(repairs);
+                await context.SaveChangesAsync();
+
+                // 4. Seed History for the first repair
+                var firstRepair = await context.Repairs.FirstAsync();
+                var now = DateTime.UtcNow;
+                var history = new List<RepairHistory>
+                {
+                    new() { RepairId = firstRepair.Id, Status = RepairStatus.Pending, Notes = "Initial reception of the device", ChangedAt = now.AddDays(-2) },
+                    new() { RepairId = firstRepair.Id, Status = RepairStatus.InProgress, Notes = "Technician started diagnostic and battery replacement", ChangedAt = now.AddDays(-1) },
+                    new() { RepairId = firstRepair.Id, Status = RepairStatus.Completed, Notes = "Battery replaced successfully and passed all quality tests", ChangedAt = now }
+                };
+                await context.RepairHistories.AddRangeAsync(history);
                 await context.SaveChangesAsync();
             }
         }
