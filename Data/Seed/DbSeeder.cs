@@ -1,5 +1,6 @@
 ﻿using SmartRepairApi.Data;
 using SmartRepairApi.Models;
+using SmartRepairApi.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace SmartRepairApi.Data.Seed
@@ -80,11 +81,12 @@ namespace SmartRepairApi.Data.Seed
 
                 // 4. Seed History for the first repair
                 var firstRepair = await context.Repairs.FirstAsync();
+                var now = DateTime.UtcNow;
                 var history = new List<RepairHistory>
                 {
-                    new() { RepairId = firstRepair.Id, Status = RepairStatus.Pending, Notes = "Received device", ChangedAt = DateTime.UtcNow.AddDays(-2) },
-                    new() { RepairId = firstRepair.Id, Status = RepairStatus.InProgress, Notes = "Replacing battery", ChangedAt = DateTime.UtcNow.AddDays(-1) },
-                    new() { RepairId = firstRepair.Id, Status = RepairStatus.Completed, Notes = "Battery replaced and tested", ChangedAt = DateTime.UtcNow }
+                    new() { RepairId = firstRepair.Id, Status = RepairStatus.Pending, Notes = "Initial reception of the device", ChangedAt = now.AddDays(-2) },
+                    new() { RepairId = firstRepair.Id, Status = RepairStatus.InProgress, Notes = "Technician started diagnostic and battery replacement", ChangedAt = now.AddDays(-1) },
+                    new() { RepairId = firstRepair.Id, Status = RepairStatus.Completed, Notes = "Battery replaced successfully and passed all quality tests", ChangedAt = now }
                 };
                 await context.RepairHistories.AddRangeAsync(history);
                 await context.SaveChangesAsync();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SmartRepairApi.Models.Enums;
 
 namespace SmartRepairApi.Models
 {
