@@ -15,3 +15,5 @@
 - **Models**: Use `required` members for mandatory data.
 - **Architecture**: Controller-Service-Repository pattern (where applicable) or direct Controller-DbContext for simpler logic, keeping DTOs for data transfer.
 - **UI/UX**: Modern, clean interfaces using Shadcn UI components.
+- **CORS**: Local development requires `http://localhost:5173` to be allowed in `Program.cs`.
+- **Frontend State**: React 19, Vite, ESM, Tailwind, Shadcn UI. Path aliases use `@/`.

@@ -27,17 +27,21 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 // Suppress automatic model validation
 builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+    })
     .ConfigureApiBehaviorOptions(options =>
     {
         // Deactivate automatic model state validation
         options.SuppressModelStateInvalidFilter = true;
     });
 
-// CORS Policy for Production Frontend
+// CORS Policy for Frontend
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
-        policy.WithOrigins("https://smart-repair-ui.vercel.app") // Allow only the production frontend URL
+        policy.WithOrigins("https://smart-repair-ui.vercel.app", "http://localhost:5173") // Allow production and local development
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
