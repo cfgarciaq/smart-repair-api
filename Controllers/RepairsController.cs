@@ -32,6 +32,8 @@ namespace SmartRepairApi.Controllers
             // Build query with filtering, sorting, and pagination
             var query = _context.Repairs
                 .Include(r => r.Client) // Include related Client
+                .Include(r => r.Technician) // Include related Technician
+                .Include(r => r.History) // Include related History
                 .AsQueryable();
 
             query = query.ApplyFiltering(param); // Apply filtering
@@ -62,6 +64,8 @@ namespace SmartRepairApi.Controllers
             // Fetch repair with related client
             var repair = await _context.Repairs
                 .Include(r => r.Client)
+                .Include(r => r.Technician)
+                .Include(r => r.History)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (repair == null)

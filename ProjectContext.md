@@ -5,7 +5,12 @@ The backend core is established with a robust schema for managing repair service
 
 ## Last Implemented Features
 - **Schema Expansion**: Added `Technician` and `RepairHistory` models.
-- **Enum Refactoring**: Moved `RepairStatus` to a dedicated namespace (`Models.Enums`).
+- **DTO Modernization**: Created `TechnicianDto` and `RepairHistoryDto`. Updated `RepairDto` to include `Status`, `Technician`, and `History`.
+- **Eager Loading**: Implemented `.Include(r => r.Technician)` and `.Include(r => r.History)` in `RepairsController` to ensure full data synchronization.
+- **Consistency**: Renamed `Specialty` to `Specialization` in `TechnicianDto` to match the domain model.
+- **AutoMapper**: Updated profiles to handle new DTO mappings.
+- **JSON Serialization**: Configured `JsonStringEnumConverter` in `Program.cs` for string-based Enum serialization.
+- **CORS**: Enabled local development access for the frontend.
 - **PostgreSQL Optimization**: 
     - Configured global mapping for `DateTime` to `timestamp with time zone`.
     - Removed legacy timestamp behavior.
@@ -13,11 +18,9 @@ The backend core is established with a robust schema for managing repair service
 - **Validation**: Added FluentValidation for Client and Repair DTOs.
 
 ## Pending Technical Debt or Bugs
-- **Frontend Integration**: The frontend needs to be modernized to match the new schema.
 - **Authentication/Authorization**: Not yet implemented.
 - **Unit Testing**: Core logic and validators need comprehensive test coverage.
 
 ## Next Immediate Steps
-1. **Phase 3: Frontend Modernization**: Initialize React 19 with Vite, Tailwind CSS, and Shadcn UI.
-2. **API Client Generation**: Update or generate frontend API clients to match the expanded schema.
-3. **Dashboard Implementation**: Create the main dashboard to visualize repairs and technician assignments.
+1. **Phase 4: Dashboard Implementation**: Create the main dashboard to visualize repairs and technician assignments.
+2. **Authentication**: Implement JWT-based authentication.
