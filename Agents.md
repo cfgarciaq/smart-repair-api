@@ -11,6 +11,7 @@
 - **Frontend**: React 19, Vite, TypeScript, Tailwind CSS, Shadcn UI.
 
 ## Development Guidelines
+- **Git Flow**: The `main` branch is protected for production-ready code. Development happens in `develop`. All future features must branch from `develop` and return to it via Pull Request.
 - **Timestamps**: Always use `DateTime.UtcNow` and map to `timestamp with time zone` in PostgreSQL.
 - **Models**: Use `required` members for mandatory data.
 - **Architecture**: Controller-Service-Repository pattern (where applicable) or direct Controller-DbContext for simpler logic, keeping DTOs for data transfer.

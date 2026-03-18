@@ -24,3 +24,10 @@ The backend core is established with a robust schema for managing repair service
 ## Next Immediate Steps
 1. **Phase 4: Dashboard Implementation**: Create the main dashboard to visualize repairs and technician assignments.
 2. **Authentication**: Implement JWT-based authentication.
+
+## Infrastructure
+- **Frontend:** Vercel (Production: `main`, Staging: `develop`).
+- **API:** Render.com (Web Service).
+  - *Justification:* Render provides a sustainable Free Tier for Web Services, ensuring the portfolio remains live indefinitely without the 30-day expiration of Azure trials. It also preserves the full ASP.NET Core logic (DTOs, AutoMapper, FluentValidation) without requiring a rewrite for serverless architectures.
+- **Database:** Supabase (Remote PostgreSQL).
+- **Strategy:** Professional hybrid cloud approach leveraging the best-in-class features of each provider.
