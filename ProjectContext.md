@@ -27,7 +27,14 @@ The backend core is established with a robust schema for managing repair service
 
 ## Infrastructure
 - **Frontend:** Vercel (Production: `main`, Staging: `develop`).
+  - **Production URL:** `https://smart-repair-ui.vercel.app`
 - **API:** Render.com (Web Service).
+  - **Production URL:** `https://smart-repair-api-5rrg.onrender.com/api`
   - *Justification:* Render provides a sustainable Free Tier for Web Services, ensuring the portfolio remains live indefinitely without the 30-day expiration of Azure trials. It also preserves the full ASP.NET Core logic (DTOs, AutoMapper, FluentValidation) without requiring a rewrite for serverless architectures.
 - **Database:** Supabase (Remote PostgreSQL).
 - **Strategy:** Professional hybrid cloud approach leveraging the best-in-class features of each provider.
+
+## Git Flow
+- **Main Branch:** Protected, production-ready code.
+- **Develop Branch:** Primary integration branch.
+- **Feature Branches:** Created from `develop`, merged back via Pull Request.
