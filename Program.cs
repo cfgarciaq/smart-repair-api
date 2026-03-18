@@ -70,7 +70,10 @@ if (app.Environment.IsDevelopment())
 app.UseSwagger(); // Enable Swagger middleware
 app.UseSwaggerUI(); // Enable Swagger UI
 
-app.UseHttpsRedirection(); // Enforce HTTPS
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection(); // Enforce HTTPS only in non-production
+}
 
 // Use CORS policy
 app.UseCors("FrontendPolicy");
