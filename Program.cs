@@ -41,7 +41,7 @@ builder.Services.AddControllers()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
-        policy.WithOrigins("https://smart-repair-ui.vercel.app") // Production Vercel URL
+        policy.WithOrigins("https://smart-repair-ui.vercel.app", "http://localhost:5173") // Allow production and local development
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
