@@ -33,3 +33,7 @@ The backend core is established with a robust schema for managing repair service
 - **Main Branch:** Protected, production-ready code.
 - **Develop Branch:** Primary integration branch.
 - **Feature Branches:** Created from `develop`, merged back via Pull Request.
+- **API:** Render.com (Web Service).
+  - *Justification:* Render provides a sustainable Free Tier for Web Services, ensuring the portfolio remains live indefinitely without the 30-day expiration of Azure trials. It also preserves the full ASP.NET Core logic (DTOs, AutoMapper, FluentValidation) without requiring a rewrite for serverless architectures.
+- **Database:** Supabase (Remote PostgreSQL).
+- **Strategy:** Professional hybrid cloud approach leveraging the best-in-class features of each provider.
