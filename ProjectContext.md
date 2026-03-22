@@ -12,6 +12,7 @@ The backend core is established with a robust schema for managing repair service
 - **Eager Loading**: Implemented `.Include(r => r.Technician)` and `.Include(r => r.History)` in `RepairsController` to ensure full data synchronization.
 - **Data Seeding**: Implemented `DbSeeder` to populate the database with initial clients, technicians, repairs, and history.
 - **Validation**: Added FluentValidation for Client and Repair DTOs.
+- **Multilingual README**: Added support for Spanish, English, and French.
 
 ## Pending Technical Debt or Bugs
 - **Authentication/Authorization**: Not yet implemented.
