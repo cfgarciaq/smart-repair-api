@@ -40,8 +40,7 @@ builder.Services.AddControllers()
 // CORS Policy for Frontend
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontendPolicy", policy =>
-        policy.WithOrigins("https://smart-repair-ui.vercel.app", "http://localhost:5173") // Allow production and local development
+    var allowedOrigins = builder.Configuration["ALLOWED_ORIGINS"]?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new[] { "http://localhost:5173" }; options.AddPolicy("FrontendPolicy", policy => policy.WithOrigins(allowedOrigins) // Allow production and local development
               .AllowAnyHeader()
               .AllowAnyMethod()
     );
@@ -70,7 +69,10 @@ if (app.Environment.IsDevelopment())
 app.UseSwagger(); // Enable Swagger middleware
 app.UseSwaggerUI(); // Enable Swagger UI
 
-app.UseHttpsRedirection(); // Enforce HTTPS
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection(); // Enforce HTTPS only in non-production
+}
 
 // Use CORS policy
 app.UseCors("FrontendPolicy");
@@ -85,3 +87,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 await app.RunAsync();
+
