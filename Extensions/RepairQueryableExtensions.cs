@@ -1,5 +1,6 @@
 ﻿using SmartRepairApi.Dtos.Repair;
 using SmartRepairApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SmartRepairApi.Extensions
 {
@@ -10,9 +11,12 @@ namespace SmartRepairApi.Extensions
         {
             if (!string.IsNullOrWhiteSpace(param.Search))
             {
+                var search = param.Search.ToLower();
                 query = query.Where(r =>
-                    r.Device.Contains(param.Search) ||
-                    r.Description.Contains(param.Search));
+                    r.Device.ToLower().Contains(search) ||
+                    r.Description.ToLower().Contains(search) ||
+                    (r.Client != null && r.Client.Name.ToLower().Contains(search)) ||
+                    (r.Technician != null && r.Technician.Name.ToLower().Contains(search)));
             }
 
             if (param.ClientId.HasValue)
@@ -49,6 +53,12 @@ namespace SmartRepairApi.Extensions
 
                 "createdat" => query.OrderBy(r => r.CreatedAt),
                 "createdat_desc" => query.OrderByDescending(r => r.CreatedAt),
+
+                "client" => query.OrderBy(r => r.Client != null ? r.Client.Name : string.Empty),
+                "client_desc" => query.OrderByDescending(r => r.Client != null ? r.Client.Name : string.Empty),
+
+                "technician" => query.OrderBy(r => r.Technician != null ? r.Technician.Name : string.Empty),
+                "technician_desc" => query.OrderByDescending(r => r.Technician != null ? r.Technician.Name : string.Empty),
 
                 _ => query.OrderByDescending(r => r.CreatedAt),
             };
