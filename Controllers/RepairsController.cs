@@ -116,6 +116,13 @@ namespace SmartRepairApi.Controllers
             [FromBody] RepairUpdateDto repairDto,
             [FromServices] IValidator<RepairUpdateDto> validator)
         {
+            
+            // Validate ID coincidences (Security check in case id in URL is different from id in body)
+            if (id != repairDto.Id)
+            {
+                return BadRequest("ID mismatch: The ID in the URL does not match the ID in the body.");
+            }
+
             // Validate input
             var validationResult = await validator.ValidateAsync(repairDto);
             if (!validationResult.IsValid)
