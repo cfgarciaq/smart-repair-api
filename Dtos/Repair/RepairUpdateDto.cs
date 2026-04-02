@@ -5,6 +5,8 @@
         // Explicit ID to ensure we are updating the correct resource
         public int Id { get; set; }
 
+        public required string Device { get; set; }
+
         public required string Description { get; set; }
         
         public required decimal Cost { get; set; }
