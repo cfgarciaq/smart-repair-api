@@ -13,6 +13,11 @@ The backend core is established with a robust schema for managing repair service
 - **Data Seeding**: Implemented `DbSeeder` to populate the database with initial clients, technicians, repairs, and history.
 - **Validation**: Added FluentValidation for Client and Repair DTOs.
 - **Multilingual README**: Added support for Spanish, English, and French.
+- **CRUD Implementation (feature/crud-imp)**:
+  - Implemented `DeleteRepair` endpoint in `RepairsController`.
+  - Created `TechniciansController` to provide technician data.
+  - Added `api/clients/all` endpoint for non-paginated client lists.
+  - Refactored `Agents.md` into a modular structure with specialized conventions in `docs/conventions/`.
 
 ## Pending Technical Debt or Bugs
 - **Authentication/Authorization**: Not yet implemented.
