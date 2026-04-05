@@ -10,6 +10,10 @@ namespace SmartRepairApi.Validators.Repair
             // Stop validating further rules on the first failure
             RuleLevelCascadeMode = CascadeMode.Stop;
 
+            RuleFor(x => x.Device)
+                .NotEmpty().WithMessage("Device is required.")
+                .MaximumLength(100).WithMessage("Device cannot exceed 100 characters.");
+
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Description is required.")
                 .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");

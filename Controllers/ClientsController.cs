@@ -50,6 +50,14 @@ namespace SmartRepairApi.Controllers
             return Ok(dto); // Return 200 with paged DTO
         }
 
+        // GET: api/Clients/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<ClientDto>>> GetAllClients()
+        {
+            var clients = await _context.Clients.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<ClientDto>>(clients));
+        }
+
         // GET: api/Clients/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ClientDto>> GetClient(int id)

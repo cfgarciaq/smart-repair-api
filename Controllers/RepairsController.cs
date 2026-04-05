@@ -7,6 +7,7 @@ using SmartRepairApi.Dtos.Common;
 using SmartRepairApi.Dtos.Repair;
 using SmartRepairApi.Extensions;
 using SmartRepairApi.Models;
+using SmartRepairApi.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace SmartRepairApi.Controllers
@@ -89,13 +90,22 @@ namespace SmartRepairApi.Controllers
 
             // 2. Mapping DTO → ENTITY
             var repair = _mapper.Map<Repair>(repairDto);
+            repair.CreatedAt = DateTime.UtcNow;
+            repair.Status = RepairStatus.Pending; // Estado inicial por defecto
 
             // 3. Save to DB
             await _context.Repairs.AddAsync(repair);
             await _context.SaveChangesAsync();
 
-            // 4. Return DTO
-            var result = _mapper.Map<RepairDto>(repair);
+            // 4. Reload relation so the returned DTO is populated
+            // This ensure that result.ClientName y result.TechnicianName no sean null
+            var populatedRepair = await _context.Repairs
+                .Include(r => r.Client)
+                .Include(r => r.Technician)
+                .FirstOrDefaultAsync(r => r.Id == repair.Id);
+
+            // 5. Return DTO
+            var result = _mapper.Map<RepairDto>(populatedRepair);
             return CreatedAtAction(nameof(GetRepair), new { id = repair.Id }, result);
         }
 
@@ -106,6 +116,13 @@ namespace SmartRepairApi.Controllers
             [FromBody] RepairUpdateDto repairDto,
             [FromServices] IValidator<RepairUpdateDto> validator)
         {
+            
+            // Validate ID coincidences (Security check in case id in URL is different from id in body)
+            if (id != repairDto.Id)
+            {
+                return BadRequest("ID mismatch: The ID in the URL does not match the ID in the body.");
+            }
+
             // Validate input
             var validationResult = await validator.ValidateAsync(repairDto);
             if (!validationResult.IsValid)
